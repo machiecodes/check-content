@@ -82038,10 +82038,19 @@ Return a JSON object with the following properties: of the categories
 (async () => {
     info(SYSTEM_PROMPT)
 
+    const userContent = `
+    The github issue to be categorized:
+    
+    ### ${github_context.payload.issue.title}
+    ${github_context.payload.issue.body}
+    `
+
+    info(userContent);
+
     const ai = new GoogleGenAI({});
     let response = await ai.models.generateContent({
         model: "gemini-2.0-flash",
-        contents: github_context.payload.issue.body,
+        contents: userContent,
         config: {
             systemInstruction: SYSTEM_PROMPT,
             responseMimeType: "application/json",

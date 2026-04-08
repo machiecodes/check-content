@@ -51,10 +51,19 @@ Return a JSON object with the following properties: of the categories
 (async () => {
     core.info(SYSTEM_PROMPT)
 
+    const userContent = `
+    The github issue to be categorized:
+    
+    ### ${context.payload.issue.title}
+    ${context.payload.issue.body}
+    `
+
+    core.info(userContent);
+
     const ai = new GoogleGenAI({});
     let response = await ai.models.generateContent({
         model: "gemini-2.0-flash",
-        contents: context.payload.issue.body,
+        contents: userContent,
         config: {
             systemInstruction: SYSTEM_PROMPT,
             responseMimeType: "application/json",
