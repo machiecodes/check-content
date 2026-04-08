@@ -56842,7 +56842,7 @@ function core_error(message, properties = {}) {
  * @param properties optional properties to add to the annotation.
  */
 function warning(message, properties = {}) {
-    issueCommand('warning', toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+    command_issueCommand('warning', utils_toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 /**
  * Adds a notice issue
@@ -56857,7 +56857,7 @@ function notice(message, properties = {}) {
  * @param message info message
  */
 function info(message) {
-    process.stdout.write(message + external_os_.EOL);
+    process.stdout.write(message + os.EOL);
 }
 /**
  * Begin an output group.
@@ -82016,43 +82016,68 @@ ${categories.map(c => `**${c.name}**\n${c.description}`).join("\n\n")}
 Issues that do not fit any of the above categories.
 
 ### Response Format
-Return a JSON object with the following properties: of the categories
+Return a JSON object with the following properties: 
 - category: The name of the category that the issue should be assigned to, "none" if it does not fit any
 - snippet: An excerpt of the issue, "evidence" of why the issue fits its category
 `;
 
 (async () => {
-    info(SYSTEM_PROMPT)
+    const geminiModel = getInput("gemini-model");
+
+    if (!geminiModel) {
+        setFailed("You must provide a Gemini model to use!");
+        return;
+    }
 
     const userContent = `
-    The github issue to be categorized:
-    
-    ### ${github_context.payload.issue.title}
+    # ${github_context.payload.issue.title} #${github_context.payload.issue.number}
     ${github_context.payload.issue.body}
     `
 
-    info(userContent);
-
     const ai = new GoogleGenAI({});
-    let response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: userContent,
-        config: {
-            systemInstruction: SYSTEM_PROMPT,
-            responseMimeType: "application/json",
-            responseSchema: {
-                type: node_Type.OBJECT,
-                properties: {
-                    category: {type: node_Type.STRING, enum: categoryNames},
-                    snippet: {type: node_Type.STRING}
-                },
-                required: ["category", "snippet"]
+    let response;
+
+    const attempts = parseInt(getInput("retry-attempts"), 10);
+
+    for (let i = 0; i < attempts; i++) {
+        try {
+            response = await ai.models.generateContent({
+                model: geminiModel,
+                contents: userContent,
+                config: {
+                    systemInstruction: SYSTEM_PROMPT,
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: node_Type.OBJECT,
+                        properties: {
+                            category: {type: node_Type.STRING, enum: categoryNames},
+                            snippet: {type: node_Type.STRING}
+                        },
+                        required: ["category", "snippet"]
+                    }
+                }
+            });
+
+            break;
+        } catch (err) {
+            const canRetry = err.status === 503 || err.status === 429;
+            if (!canRetry || i === attempts - 1) {
+                setFailed(`Failed to query Gemini API:\n${err.message}`);
+                return;
             }
+
+            const delay = Math.pow(2, i);
+            warning(`Gemini API request failed with status ${err.status}, retrying in ${delay}s...`);
+            await new Promise(res => setTimeout(res, delay * 1000));
         }
-    });
+    }
+
+    if (!response) {
+        setFailed("Failed to get a response from Gemini API");
+        return;
+    }
 
     response = JSON.parse(response.text);
-    info(response);
 
     if (response.category === "none") {
         return;
@@ -82063,7 +82088,10 @@ Return a JSON object with the following properties: of the categories
     const owner = github_context.repo.owner;
     const repo = github_context.repo.repo;
 
-    const message = `### This issue is being automatically closed.\n${categories.find(c => c.name === response.category).message}`;
+    const message = `
+    ### This issue is being automatically closed.
+    ${categories.find(c => c.name === response.category).message}
+    `;
 
     try {
         await octokit.rest.issues.createComment({
