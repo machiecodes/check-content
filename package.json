@@ -18,7 +18,9 @@
   },
   "dependencies": {
     "@actions/core": "^3.0.0",
-    "@actions/github": "^9.0.0"
+    "@actions/github": "^9.0.0",
+    "@google/genai": "^1.48.0",
+    "js-yaml": "^4.1.1"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.4"

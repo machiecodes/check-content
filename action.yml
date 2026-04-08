@@ -7,6 +7,9 @@ branding:
   color: "white"
 
 inputs:
+  project-context:
+    description: Provide project-specific context for the AI.
+    required: false
   close-label:
     description: The label to apply when closing an issue.
     required: false
