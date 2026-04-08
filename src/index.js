@@ -42,10 +42,8 @@ Return a JSON object with the following properties:
         return;
     }
 
-    const userContent = `
-    # ${context.payload.issue.title} #${context.payload.issue.number}
-    ${context.payload.issue.body}
-    `
+    const userContent = `# ${context.payload.issue.title} #${context.payload.issue.number}\n` +
+        `${context.payload.issue.body}`
 
     const ai = new GoogleGenAI({});
     let response;
@@ -80,13 +78,13 @@ Return a JSON object with the following properties:
             }
 
             const delay = Math.pow(2, i);
-            core.warning(`Gemini API request failed with status ${err.status}, retrying in ${delay}s...`);
+            core.warning(`Gemini API request failed with status ${err.status}, retrying in ${delay}s.`);
             await new Promise(res => setTimeout(res, delay * 1000));
         }
     }
 
     if (!response) {
-        core.setFailed("Failed to get a response from Gemini API");
+        core.setFailed("Failed to get a response from Gemini API.");
         return;
     }
 
@@ -101,10 +99,8 @@ Return a JSON object with the following properties:
     const owner = context.repo.owner;
     const repo = context.repo.repo;
 
-    const message = `
-    ### This issue is being automatically closed.
-    ${categories.find(c => c.name === response.category).message}
-    `;
+    const message = '### This issue is being automatically closed.\n' +
+        `${categories.find(c => c.name === response.category).message}`;
 
     try {
         await octokit.rest.issues.createComment({
@@ -122,7 +118,7 @@ Return a JSON object with the following properties:
                 owner, repo, issue_number: issueNumber, labels: [label]
             });
         } catch (error) {
-            core.setFailed(`Failed to add label: ${error.message}`);
+            core.error(`Failed to add label: ${error.message}`);
         }
     }
 

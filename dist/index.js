@@ -82029,10 +82029,8 @@ Return a JSON object with the following properties:
         return;
     }
 
-    const userContent = `
-    # ${github_context.payload.issue.title} #${github_context.payload.issue.number}
-    ${github_context.payload.issue.body}
-    `
+    const userContent = `# ${github_context.payload.issue.title} #${github_context.payload.issue.number}\n` +
+        `${github_context.payload.issue.body}`
 
     const ai = new GoogleGenAI({});
     let response;
@@ -82067,13 +82065,13 @@ Return a JSON object with the following properties:
             }
 
             const delay = Math.pow(2, i);
-            warning(`Gemini API request failed with status ${err.status}, retrying in ${delay}s...`);
+            warning(`Gemini API request failed with status ${err.status}, retrying in ${delay}s.`);
             await new Promise(res => setTimeout(res, delay * 1000));
         }
     }
 
     if (!response) {
-        setFailed("Failed to get a response from Gemini API");
+        setFailed("Failed to get a response from Gemini API.");
         return;
     }
 
@@ -82088,10 +82086,8 @@ Return a JSON object with the following properties:
     const owner = github_context.repo.owner;
     const repo = github_context.repo.repo;
 
-    const message = `
-    ### This issue is being automatically closed.
-    ${categories.find(c => c.name === response.category).message}
-    `;
+    const message = '### This issue is being automatically closed.\n' +
+        `${categories.find(c => c.name === response.category).message}`;
 
     try {
         await octokit.rest.issues.createComment({
@@ -82109,7 +82105,7 @@ Return a JSON object with the following properties:
                 owner, repo, issue_number: issueNumber, labels: [label]
             });
         } catch (error) {
-            setFailed(`Failed to add label: ${error.message}`);
+            core_error(`Failed to add label: ${error.message}`);
         }
     }
 
