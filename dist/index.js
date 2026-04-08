@@ -82035,7 +82035,7 @@ Return a JSON object with the following properties: of the categories
 
     const ai = new GoogleGenAI({});
     let response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.5-flash",
         contents: userContent,
         config: {
             systemInstruction: SYSTEM_PROMPT,
