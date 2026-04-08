@@ -1,7 +1,7 @@
 categories:
   - name: "new-version"
     description: "Users asking when the client will update to the newest version of Minecraft."
-    message: "Message1"
+    message: "new-version"
 
   - name: "cheating"
     description: "Users asking for help bypassing server anticheats or requesting features commonly associated with 
@@ -10,13 +10,13 @@ categories:
     watchdog, wraith. Exercise caution here however - our client **is** an anarchy client, however it's only INTENDED 
     for use on servers that explicitly allow it. Try to distinguish whether the user is discussing features that make 
     sense within that purview, or if their intention is to use the client to cheat/grief on servers that don't allow it."
-    message: "Message1"
+    message: "cheating"
 
   - name: "launchers"
     description: "Users asking for help using the client on pirated or unsupported launchers. Some launchers we do not 
     support are: feather, labymod, lunar client, pojav launcher, zalith launcher, tlauncher and xlauncher. As a general 
     rule, the client is only designed to run on the official launcher or MultiMC/Prism, on a desktop device."
-    message: "Message2"
+    message: "launchers"
 
   - name: "features"
     description: "Users asking for features that are either impossible to create, associated with cheating/griefing, or 
@@ -25,14 +25,14 @@ categories:
     does contain a basic killaura module and a speed hack, but these are expected features for any client made 
     specifically for anarchy. Only use this category if the feature seems oriented specifically towards use outside an 
     anarchy environment."
-    message: "Message3"
+    message: "features"
 
   - name: "old-versions"
     description: "Users asking either for support with old versions of the client, or for help obtaining them. We do
     provide a public archive of recent build artifacts, but we do not provide support for anything but the newest LTS 
     and dev builds."
-    message: "Message4"
+    message: "old-versions"
 
   - name: "forge-port"
     description: "Users asking if there are any plans to port the client (written as a Fabric mod) to Forge."
-    message: "Message5"
+    message: "forge"

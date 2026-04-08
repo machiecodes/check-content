@@ -24,7 +24,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          gemini-model: "gemini-2.5-flash"
           project-context: "You are categorizing issues for a FOSS Minecraft anarchy client. This client is meant to
           exploit the game but purely for research purposes, only for use on servers that explicitly allow it. The 
           client is written in Java and uses the Fabric API."
-          close-label: "invalid"
