@@ -82088,8 +82088,10 @@ Return a JSON object with the following properties:
     const owner = github_context.repo.owner;
     const repo = github_context.repo.repo;
 
-    const message = '### This issue is being automatically closed.\n' +
+    let message = '### This issue is being automatically closed.\n' +
         `${categories.find(c => c.name === response.category).message}`;
+    message = Function(...Object.keys(github_context.payload), `return \`${message}\``)(...Object.values(github_context.payload))
+
 
     try {
         await octokit.rest.issues.createComment({
