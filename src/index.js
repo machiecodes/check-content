@@ -7,7 +7,7 @@ import * as fs from "fs";
 const token = process.env.GITHUB_TOKEN;
 
 let categoriesFile = fs.readFileSync(".github/categories.yml", "utf8");
-let categories = yaml.load(categoriesFile);
+let categories = yaml.load(categoriesFile).categories;
 let categoryNames = categories.map(c => c.name);
 
 let SYSTEM_PROMPT = `
@@ -23,22 +23,7 @@ qualifies for each, are listed below. If the issue does not clearly fit any of t
 ${core.getInput("project-context") || "None"}
 
 ### Categories
-${() => {
-    let categoryDetails;
-
-    let categoriesFile = fs.readFileSync(".github/categories.yml", "utf8");
-    let categories = yaml.load(categoriesFile);
-
-    for (let category in categories) {
-        categoryDetails += `
-        **${category.name}**
-        ${category.description}
-        
-        `;
-    }
-
-    return categoryDetails;
-}}
+${categories.map(c => `**${c.name}**\n${c.description}`).join("\n\n")}
 **None**
 Issues that do not fit any of the above categories.
 
@@ -90,7 +75,7 @@ Return a JSON object with the following properties: of the categories
     const owner = context.repo.owner;
     const repo = context.repo.repo;
 
-    const message = `###This issue is being automatically closed.\n${categories[response.category].message}`;
+    const message = `### This issue is being automatically closed.\n${categories.find(c => c.name === response.category).message}`;
 
     try {
         await octokit.rest.issues.createComment({

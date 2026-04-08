@@ -81994,7 +81994,7 @@ function getApiKeyFromEnv() {
 const token = process.env.GITHUB_TOKEN;
 
 let categoriesFile = external_fs_.readFileSync(".github/categories.yml", "utf8");
-let categories = load(categoriesFile);
+let categories = load(categoriesFile).categories;
 let categoryNames = categories.map(c => c.name);
 
 let SYSTEM_PROMPT = `
@@ -82010,22 +82010,7 @@ qualifies for each, are listed below. If the issue does not clearly fit any of t
 ${getInput("project-context") || "None"}
 
 ### Categories
-${() => {
-    let categoryDetails;
-
-    let categoriesFile = external_fs_.readFileSync(".github/categories.yml", "utf8");
-    let categories = load(categoriesFile);
-
-    for (let category in categories) {
-        categoryDetails += `
-        **${category.name}**
-        ${category.description}
-        
-        `;
-    }
-
-    return categoryDetails;
-}}
+${categories.map(c => `**${c.name}**\n${c.description}`).join("\n\n")}
 **None**
 Issues that do not fit any of the above categories.
 
@@ -82077,7 +82062,7 @@ Return a JSON object with the following properties: of the categories
     const owner = github_context.repo.owner;
     const repo = github_context.repo.repo;
 
-    const message = `###This issue is being automatically closed.\n${categories[response.category].message}`;
+    const message = `### This issue is being automatically closed.\n${categories.find(c => c.name === response.category).message}`;
 
     try {
         await octokit.rest.issues.createComment({
