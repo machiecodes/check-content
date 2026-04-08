@@ -82011,6 +82011,7 @@ ${getInput("project-context") || "None"}
 
 ### Categories
 ${categories.map(c => `**${c.name}**\n${c.description}`).join("\n\n")}
+
 **None**
 Issues that do not fit any of the above categories.
 
@@ -82034,7 +82035,7 @@ Return a JSON object with the following properties: of the categories
 
     const ai = new GoogleGenAI({});
     let response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-3-flash-preview",
         contents: userContent,
         config: {
             systemInstruction: SYSTEM_PROMPT,
