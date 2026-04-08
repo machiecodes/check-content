@@ -8,7 +8,7 @@ branding:
 
 inputs:
   gemini-model:
-    description: The model to use for the AI (choose a free one from https://ai.google.dev/gemini-api/docs/pricing)
+    description: The Gemini model to use.
     required: true
   retry-attempts:
     description: The number of times to retry the AI request.

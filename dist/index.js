@@ -56857,7 +56857,7 @@ function notice(message, properties = {}) {
  * @param message info message
  */
 function info(message) {
-    process.stdout.write(message + os.EOL);
+    process.stdout.write(message + external_os_.EOL);
 }
 /**
  * Begin an output group.
@@ -82080,6 +82080,8 @@ Return a JSON object with the following properties:
     if (response.category === "none") {
         return;
     }
+
+    info(`Category: ${response.category}, Snippet: ${response.snippet}`);
 
     const octokit = getOctokit(token);
     const issueNumber = github_context.payload.issue.number;

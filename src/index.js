@@ -94,6 +94,8 @@ Return a JSON object with the following properties:
         return;
     }
 
+    core.info(`Category: ${response.category}, Snippet: ${response.snippet}`);
+
     const octokit = getOctokit(token);
     const issueNumber = context.payload.issue.number;
     const owner = context.repo.owner;
