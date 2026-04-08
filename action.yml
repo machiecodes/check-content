@@ -1,0 +1,16 @@
+name: "Check Content"
+description: "AI-assisted action to close spammy, off-topic or otherwise unwanted issues."
+author: "machiecodes"
+
+branding:
+  icon: "trash"
+  color: "white"
+
+inputs:
+  close-label:
+    description: The label to apply when closing an issue.
+    required: false
+
+runs:
+  using: "node24"
+  main: "dist/index.js"

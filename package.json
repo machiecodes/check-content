@@ -1,0 +1,26 @@
+{
+  "name": "check-content",
+  "version": "1.0.0",
+  "description": "AI-assisted action to close spammy, off-topic or otherwise unwanted issues.",
+  "homepage": "https://github.com/machiecodes/check-content#readme",
+  "bugs": {
+    "url": "https://github.com/machiecodes/check-content/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/machiecodes/check-content.git"
+  },
+  "license": "GPL-3.0-only",
+  "author": "machiecodes",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "ncc build src/index.js -o dist --license licenses.txt"
+  },
+  "dependencies": {
+    "@actions/core": "^3.0.0",
+    "@actions/github": "^9.0.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.4"
+  }
+}

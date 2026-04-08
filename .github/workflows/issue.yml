@@ -1,0 +1,26 @@
+name: Check Content
+
+on:
+  issues:
+    types: [ opened ]
+
+jobs:
+  issue-moderator:
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Check Content
+        uses: ./
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          close-label: "invalid"
