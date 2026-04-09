@@ -101,10 +101,8 @@ Return a JSON object with the following properties:
     const owner = context.repo.owner;
     const repo = context.repo.repo;
 
-    let message = '### This issue is being automatically closed.\n' +
-        `${categories.find(c => c.name === response.category).message}`;
+    let message = categories.find(c => c.name === response.category).message
     message = Function(...Object.keys(context.payload), `return \`${message}\``)(...Object.values(context.payload))
-
 
     try {
         await octokit.rest.issues.createComment({
