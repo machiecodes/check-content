@@ -82017,8 +82017,9 @@ Issues that do not fit any of the above categories.
 
 ### Response Format
 Return a JSON object with the following properties: 
-- category: The name of the category that the issue should be assigned to, "none" if it does not fit any
-- reasoning: Your reasoning for why the issue fits the assigned category, including relevant snippets as evidence
+- reasoning: Examine the issue and reason about which category it should be assigned to, coming to a definitive answer
+- category: The category you reasoned the issue would fall into - if your reasoning concluded the issue is valid, you 
+must return none
 `;
 
 (async () => {
@@ -82048,10 +82049,10 @@ Return a JSON object with the following properties:
                     responseSchema: {
                         type: node_Type.OBJECT,
                         properties: {
-                            category: {type: node_Type.STRING, enum: categoryNames},
-                            reasoning: {type: node_Type.STRING}
+                            reasoning: {type: node_Type.STRING},
+                            category: {type: node_Type.STRING, enum: categoryNames}
                         },
-                        required: ["category", "reasoning"]
+                        required: ["reasoning", "category"]
                     }
                 }
             });
