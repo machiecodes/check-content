@@ -82081,7 +82081,7 @@ Return a JSON object with the following properties:
         return;
     }
 
-    info(`Category: ${response.category}, Reasoning: ${response.snippet}`);
+    info(`Category: ${response.category}, Reasoning: ${response.reasoning}`);
 
     const octokit = getOctokit(token);
     const issueNumber = github_context.payload.issue.number;
