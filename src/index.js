@@ -31,7 +31,7 @@ Issues that do not fit any of the above categories.
 ### Response Format
 Return a JSON object with the following properties: 
 - category: The name of the category that the issue should be assigned to, "none" if it does not fit any
-- snippet: An excerpt of the issue, "evidence" of why the issue fits its category
+- reasoning: Your reasoning for why the issue fits the assigned category, including relevant snippets as evidence
 `;
 
 (async () => {
@@ -62,9 +62,9 @@ Return a JSON object with the following properties:
                         type: Type.OBJECT,
                         properties: {
                             category: {type: Type.STRING, enum: categoryNames},
-                            snippet: {type: Type.STRING}
+                            reasoning: {type: Type.STRING}
                         },
-                        required: ["category", "snippet"]
+                        required: ["category", "reasoning"]
                     }
                 }
             });
@@ -94,7 +94,7 @@ Return a JSON object with the following properties:
         return;
     }
 
-    core.info(`Category: ${response.category}, Snippet: ${response.snippet}`);
+    core.info(`Category: ${response.category}, Reasoning: ${response.snippet}`);
 
     const octokit = getOctokit(token);
     const issueNumber = context.payload.issue.number;
