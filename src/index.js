@@ -1,14 +1,13 @@
 import { getOctokit, context } from '@actions/github';
 import * as core from "@actions/core";
 import * as yaml from "js-yaml";
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import * as fs from "fs";
 
 const token = process.env.GITHUB_TOKEN;
 
 let categoriesFile = fs.readFileSync(".github/categories.yml", "utf8");
 let categories = yaml.load(categoriesFile).categories;
-let categoryNames = categories.map(c => c.name);
 
 let SYSTEM_PROMPT = `
 ### Instructions
@@ -30,9 +29,14 @@ Issues that do not fit any of the above categories.
 
 ### Response Format
 Return a JSON object with the following properties: 
-- reasoning: Examine the issue and reason about which category it should be assigned to, coming to a definitive answer
-- category: The category you reasoned the issue would fall into - if your reasoning concluded the issue is valid, you 
-must return none
+- reasoning: Examine the issue and reason about which category it should be assigned to, coming to a definitive answer. 
+You should then include the kebab-case-name of the category as the last line of your response.
+
+### Example Response
+"I am reasoning about which category the issue fits into. Since none of the categories seem to apply, this is a valid
+issue and should remain open.
+
+none"
 `;
 
 (async () => {
@@ -58,15 +62,6 @@ must return none
                 contents: userContent,
                 config: {
                     systemInstruction: SYSTEM_PROMPT,
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: Type.OBJECT,
-                        properties: {
-                            reasoning: {type: Type.STRING},
-                            category: {type: Type.STRING, enum: categoryNames}
-                        },
-                        required: ["reasoning", "category"]
-                    }
                 }
             });
 
@@ -89,20 +84,24 @@ must return none
         return;
     }
 
-    response = JSON.parse(response.text);
+    response = response.text
 
-    if (response.category === "none") {
+    const lines = response.trim().split('\n');
+    const category = lines[lines.length - 1].trim();
+    const reasoning = lines.slice(0, -1).join('\n').trim();
+
+    if (category === "none") {
         return;
     }
 
-    core.info(`Category: ${response.category}, Reasoning: ${response.reasoning}`);
+    core.info(`Category: ${category}, Reasoning: ${reasoning}`);
 
     const octokit = getOctokit(token);
     const issueNumber = context.payload.issue.number;
     const owner = context.repo.owner;
     const repo = context.repo.repo;
 
-    let message = categories.find(c => c.name === response.category).message
+    let message = categories.find(c => c.name === category).message
     message = Function(...Object.keys(context.payload), `return \`${message}\``)(...Object.values(context.payload))
 
     try {
