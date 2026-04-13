@@ -82077,11 +82077,11 @@ none"
     const category = lines[lines.length - 1].trim();
     const reasoning = lines.slice(0, -1).join('\n').trim();
 
+    info(`Category: ${category}, Reasoning: ${reasoning}`);
+
     if (category === "none") {
         return;
     }
-
-    info(`Category: ${category}, Reasoning: ${reasoning}`);
 
     const octokit = getOctokit(token);
     const issueNumber = github_context.payload.issue.number;
