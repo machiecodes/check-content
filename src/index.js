@@ -90,11 +90,11 @@ none"
     const category = lines[lines.length - 1].trim();
     const reasoning = lines.slice(0, -1).join('\n').trim();
 
+    core.info(`Category: ${category}, Reasoning: ${reasoning}`);
+
     if (category === "none") {
         return;
     }
-
-    core.info(`Category: ${category}, Reasoning: ${reasoning}`);
 
     const octokit = getOctokit(token);
     const issueNumber = context.payload.issue.number;
