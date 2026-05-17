@@ -7,7 +7,7 @@ import * as fs from "fs";
 const token = process.env.GITHUB_TOKEN;
 
 let categoriesFile = fs.readFileSync(".github/categories.yml", "utf8");
-let categories = yaml.load(categoriesFile).categories;
+let categories = yaml.load(categoriesFile, {}).categories;
 
 let SYSTEM_PROMPT = `
 ### Instructions
