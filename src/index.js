@@ -101,9 +101,15 @@ none
     const owner = context.repo.owner;
     const repo = context.repo.repo;
 
-    let message = categories.find(c => c.name === category).message
-    message = Function(...Object.keys(context.payload), `return \`${message}\``)(...Object.values(context.payload))
+    const matchingCategory = categories.find(c => c.name === category);
+    if (!matchingCategory) {
+        core.setFailed(`Unrecognized category from model: "${category}". Full response:\n${response}`);
+        return;
+    }
 
+    let message = matchingCategory.message
+    message = Function(...Object.keys(context.payload), `return \`${message}\``)(...Object.values(context.payload))
+    
     try {
         await octokit.rest.issues.createComment({
             owner, repo, issue_number: issueNumber, body: message
