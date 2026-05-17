@@ -28,15 +28,15 @@ ${categories.map(c => `**${c.name}**\n${c.description}`).join("\n\n")}
 Issues that do not fit any of the above categories.
 
 ### Response Format
-Return a JSON object with the following properties: 
-- reasoning: Examine the issue and reason about which category it should be assigned to, coming to a definitive answer. 
-You should then include the kebab-case-name of the category as the last line of your response.
+Respond with plain text only, no JSON, no markdown, no code blocks. First, write your reasoning about which category
+the issue fits into. Then, on the very last line of your response, write only the kebab-case name of the category
+(e.g. "not-an-issue" or "none"). Nothing else should appear on that last line.
 
 ### Example Response
-"I am reasoning about which category the issue fits into. Since none of the categories seem to apply, this is a valid
+I am reasoning about which category the issue fits into. Since none of the categories seem to apply, this is a valid
 issue and should remain open.
 
-none"
+none
 `;
 
 (async () => {
